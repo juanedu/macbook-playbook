@@ -21,8 +21,11 @@ ANSIBLE_ROLES_DIRECTORY         := $(ANSIBLE_DIRECTORY)/roles
 ANSIBLE_INVENTORY               := $(ANSIBLE_DIRECTORY)/hosts
 ANSIBLE_VERBOSE                 := -v
 ANSIBLE_VAULT_PASSWORD_FILE     := $(ANSIBLE_DIRECTORY)/.ansible_vault_password
+PROJECT_ROOT				:= .
 ANSIBLE_SECRETS_DIRECTORY				:= $(PROJECT_ROOT)/secrets
 ANSIBLE_SENSITIVE_CONTENT_FILES := $(ANSIBLE_SECRETS_DIRECTORY)/*
+
+ANSIBLE_GALAXY := $(PYTHON_BIN_PATH)/ansible-galaxy
 
 ANSIBLE := \
 	$(PYTHON_BIN_PATH)/ansible-playbook $(ANSIBLE_VERBOSE) \
@@ -62,7 +65,7 @@ bootstrap:
 		--extra-vars "project_root=$(LOCAL_PROJECT_DIRECTORY)" \
 		$(ANSIBLE_PLAYBOOKS_DIRECTORY)/bootstrap.yml
 	$(PIP) install --user ansible
-	ansible-galaxy collection install \
+	$(ANSIBLE_GALAXY) collection install \
 		-r $(ANSIBLE_DIRECTORY)/requirements.yml \
 		-p $(ANSIBLE_DIRECTORY)/galaxy
 
@@ -104,6 +107,10 @@ encrypt:
 .PHONY: decrypt
 decrypt:
 	$(call ANSIBLE_VAULT,decrypt) $(FILES)
+
+.PHONY: encrypt
+view-encrypted:
+	$(call ANSIBLE_VAULT,view) $(FILES)
 
 .PHONY: encrypt_pre_commit
 encrypt_pre_commit: encrypt

@@ -5,6 +5,8 @@
 :TOC:      ignore
 :END:
 
+TODO: write ~/.ssh/config
+
 Install all your applications and configure everything the way you like it with one command.
 
 ** Table of Contents

@@ -60,7 +60,10 @@
       vars:
         # https://nodejs.org/dist/
         # https://github.com/nodejs/node/releases
-        node_version: "17.1.0"
+        #
+        # NOTE: pinned to the version below (and not latest) due to personal
+        # projects.
+        node_version: "16.15.0"
 
     - role: maven
       tags: [foundational, package-and-build, brew-pkg, maven]
@@ -153,17 +156,14 @@
     - role: emacs-pre-built
       tags: [text-editors, bespoke-pkg, emacs-pre-built]
       vars:
-        emacs_pre_built_version: "27.2"
-        emacs_pre_built_patch: "-3"
+        emacs_pre_built_version: "28.2"
+        emacs_pre_built_patch: ""
         # emacs_pre_built_version: "26.1-rc1"
         # emacs_pre_built_pretest: "yes"
 
-    # DISABLED: Vim isn't compiling on macOS Big Sur with LLVM 12, disabling
-    # until I figure it out.
-    # https://stackoverflow.com/questions/65750657/getting-an-error-on-configuring-vim-uint32-t-check-not-defined-correctly
-    # NOTE: testing with Monterey.
+    # DISABLED: Vim isn't compiling with Python 3.10.
     - role: vim
-      tags: [text-editors, bespoke-pkg, vim]
+      tags: [disabled, text-editors, bespoke-pkg, vim]
       vars:
         vim_version: "8.2"
 
@@ -442,8 +442,10 @@
     - role: shfmt
       tags: [programming-utilities, brew-pkg, shfmt]
 
+    # DISABLED: it fails to install on Monterey because a dependency
+    # (pywatchman) isn't building correctly.
     - role: pyre-check
-      tags: [programming-utilities, pip-pkg, pyre-check]
+      tags: [disabled, programming-utilities, pip-pkg, pyre-check]
 
     - role: shellcheck
       tags: [programming-utilities, brew-pkg, shellcheck]
