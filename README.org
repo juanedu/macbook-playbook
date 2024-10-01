@@ -9,55 +9,63 @@ Install all your applications and configure everything the way you like it with 
 
 ** Table of Contents
    :PROPERTIES:
-   :TOC:      this
+   :TOC:      :include all
    :END:
-    - [[#tested-on][Tested on]]
-    - [[#configuring-machine][Configuring machine]]
-      - [[#install-developer-tools-xcode-select][Install Developer Tools (xcode-select)]]
-      - [[#clone-repository][Clone repository]]
-      - [[#create-an-ansible-vault-password][Create an Ansible Vault password]]
-      - [[#encrypted-files-using-ansible-vault][Encrypted files (using Ansible Vault)]]
-      - [[#prepare-machine-to-run-the-ansible-playbooks][Prepare machine to run the Ansible playbooks]]
-      - [[#provision-machine][Provision machine]]
-      - [[#manual-steps-post-make-converge][Manual steps post make converge]]
-        - [[#httpmizagecomhelpaccessibilityhtmlenable-assistive-access-for-divvy][Enable assistive access for Divvy]]
-        - [[#enable-assistive-access-for-terminal][Enable assistive access for Terminal]]
-        - [[#enable-assistive-access-for-emacs][Enable assistive access for Emacs]]
-        - [[#set-up-spotify-lastfm-connect][Set up Spotify Last.fm connect]]
-    - [[#roles][Roles]]
-      - [[#installs][Installs]]
-        - [[#desktop-applications][Desktop Applications]]
-        - [[#text-editors][Text Editors]]
-        - [[#communication][Communication]]
-        - [[#configuration][Configuration]]
-        - [[#multimedia][Multimedia]]
-        - [[#browser-plugins][Browser Plugins]]
-        - [[#programming-languages][Programming Languages]]
-        - [[#virtualization-provisioning-containers-and-system-tools][Virtualization, Provisioning, Containers and System Tools]]
-        - [[#package-managers-and-build-tools][Package Managers and Build Tools]]
-        - [[#shell][Shell]]
-        - [[#programming-utilities][Programming Utilities]]
-        - [[#security][Security]]
-        - [[#gnu-command-line-tools][GNU Command Line Tools]]
-        - [[#data-systems][Data Systems]]
-        - [[#configuration-monitoring-and-debugging-tag-observability][Configuration, Monitoring and Debugging (tag: observability)]]
-        - [[#document-processors-and-plotting][Document Processors and Plotting]]
-        - [[#markup-tools][Markup Tools]]
-        - [[#command-line-tools][Command line tools]]
-        - [[#miscellaneous][Miscellaneous]]
-      - [[#configures][Configures]]
-        - [[#passwordless-sudo][Passwordless sudo]]
-        - [[#remaps-caps-lock-to-control][Remaps Caps-Lock to Control]]
-        - [[#puts-ssh-keys-in-place][Puts SSH keys in place]]
-        - [[#makes-google-chrome-the-default-browser][Makes Google Chrome the default browser]]
-    - [[#author][Author]]
-    - [[#license][License]]
+   :CONTENTS:
+- [[#table-of-contents][Table of Contents]]
+- [[#tested-on][Tested on]]
+- [[#bootstrap-machine-make-bootstrap][Bootstrap machine (make bootstrap)]]
+  - [[#install-developer-tools-xcode-select][Install Developer Tools (xcode-select)]]
+  - [[#clone-repository][Clone repository]]
+  - [[#give-terminaliterm2emacsetc-assistive-access][Give Terminal/iTerm2/Emacs/etc. assistive access]]
+  - [[#secrets][Secrets]]
+  - [[#prepare-machine-to-run-the-ansible-playbooks][Prepare machine to run the Ansible playbooks]]
+- [[#configure-machine-make-converge][Configure machine (make converge)]]
+  - [[#provision-machine][Provision machine]]
+  - [[#manual-steps-post-make-converge][Manual steps post make converge]]
+    - [[#change-keyboard-layout-to-us-international][Change keyboard layout to U.S. international]]
+    - [[#istat-menus][iStat Menus]]
+    - [[#pdf-expert][PDF Expert]]
+    - [[#bettertouchtool][BetterTouchTool]]
+    - [[#terminal][Terminal]]
+      - [[#preferences--profiles--pro--font][Preferences > Profiles > Pro > Font]]
+    - [[#system-preferences--security--privacy--privacy--accessibility][System Preferences > Security & Privacy > Privacy >]]
+    - [[#system-preferences--keyboard--shortcuts--mission-control][System Preferences > Keyboard > Shortcuts > Mission Control]]
+- [[#roles][Roles]]
+  - [[#installs][Installs]]
+    - [[#desktop-applications][Desktop Applications]]
+    - [[#text-editors][Text Editors]]
+    - [[#configuration][Configuration]]
+    - [[#programming-languages][Programming Languages]]
+    - [[#multimedia][Multimedia]]
+    - [[#fonts][Fonts]]
+    - [[#browser-plugins][Browser Plugins]]
+    - [[#virtualization-provisioning-containers-and-system-tools][Virtualization, Provisioning, Containers and System Tools]]
+    - [[#package-managers-and-build-tools][Package Managers and Build Tools]]
+    - [[#shell][Shell]]
+    - [[#programming-utilities][Programming Utilities]]
+    - [[#data-systems][Data Systems]]
+    - [[#configuration-monitoring-and-debugging][Configuration, Monitoring and Debugging]]
+    - [[#document-processors-and-plotting][Document Processors and Plotting]]
+    - [[#markup-tools][Markup Tools]]
+    - [[#command-line-tools][Command line tools]]
+    - [[#security][Security]]
+    - [[#gnu-command-line-tools][GNU Command Line Tools]]
+    - [[#miscellaneous][Miscellaneous]]
+  - [[#configures][Configures]]
+    - [[#makes-google-chrome-the-default-browser][Makes Google Chrome the default browser]]
+    - [[#passwordless-sudo][Passwordless sudo]]
+    - [[#puts-ssh-keys-in-place][Puts SSH keys in place]]
+    - [[#remaps-caps-lock-to-control][Remaps Caps-Lock to Control]]
+- [[#author][Author]]
+- [[#license][License]]
+   :END:
 
 ** Tested on
-   I've been using =macbook-playbook= since 2013. I've used it on at least six
-   MacBook Pros with different macOS versions. As of March 2021 I use it on both
-   my current MacBook Pros, one with Catalina and the other with Big Sur
-   installed.
+   I've been using =macbook-playbook= since 2013. I've used it on at least eight
+   MacBook Pros with different macOS versions. As of May 2023 I use it on my
+   personal 16" 2023 Macbook Pro with Ventura installed and on my work 16" 2019
+   Macbook Pro with Monterey installed.
 
    Please open an issue if you're trying this out and bump into anything.
 
@@ -86,42 +94,31 @@ Install all your applications and configure everything the way you like it with 
     add the application running =macbook-playbook= (Terminal/iTerm2/Emacs/etc.)
     to the list.
 
-*** Create an Ansible Vault password
-    This password will be used to encrypt and decrypt the files referenced in
-    the [[#encrypted-files][Encrypted files]] section. Please make sure to use a [[https://1password.com/password-generator/][strong password]].
-
-    #+begin_src bash
-    echo 'SomePassword123$' > .ansible_vault_password
-    #+end_src
-
-*** Encrypted files (using Ansible Vault)
+*** Secrets
     :PROPERTIES:
-    :CUSTOM_ID: encrypted-files
+    :CUSTOM_ID: secrets
     :END:
-    The following files currently checked into this git repository are encrypted with my
-    personal Ansible Vault password. Unless you have my password, roles
-    referencing these files will fail to run.
+    I keep secrets encrypted in a file outside of this repository. I have a
+    project (also outside of this repository) that will write all secrets
+    required by this project's roles to =group_vars/localhost/vars.yml=. This
+    file is git-ignored in this project.
 
-    | Description                       | File                                             | Role              |
-    | AWS CLI credentials               | =secrets/aws_credentials_file=                   | awscli            |
-    | BetterTouchTool license           | =secrets/better_touch_tool_license_file=         | better-touch-tool |
-    | DaisyDisk license                 | =secrets/daisydisk_registration_key_file=        | daisydisk         |
-    | Enviroment variables for [[https://github.com/mpereira/dotfiles][dotfiles]] | =secrets/mpereira_dotfiles_environment_yml_file= | dotfiles          |
-    | iStat Menus settings              | =secrets/istat_menus_settings_file=              | istat-menus       |
-    | Prey API key                      | =secrets/prey_api_key_yaml_file=                 | prey              |
-    | Private SSH key                   | =secrets/mpereira_at_pluto_ssh_private_key=      | ssh-keys          |
-    | s3cmd configuration               | =secrets/s3cmd_cfg_file=                         | s3cmd             |
+    These are the roles that use secrets:
+    | Description                       | Secret name                                | Role              |
+    | AWS CLI credentials               | =aws_credentials_file_base64=              | awscli            |
+    | BetterTouchTool license           | =better_touch_tool_license_file_base64=    | better-touch-tool |
+    | DaisyDisk license                 | =daisydisk_registration_key_file_base64=   | daisydisk         |
+    | Enviroment variables for [[https://github.com/mpereira/dotfiles][dotfiles]] | =dotfiles_environment_yml_file_base64=     | dotfiles          |
+    | iStat Menus settings              | =istat_menus_settings_file_base64=         | istat-menus       |
+    | Prey API key                      | =prey_api_key_yaml_file_base64=            | prey              |
+    | Private SSH key                   | =mpereira_at_pluto_ssh_private_key_base64= | ssh-keys          |
+    | s3cmd configuration               | =s3cmd_cfg_file_base64=                    | s3cmd             |
 
-    You have two choices: skip these roles, and/or overwrite the encrypted files
-    with your own.
+    If a =group_vars/localhost/vars.yml= file with those secrets is absent
+    running these roles will fail.
 
-    To overwrite them first run
-    #+begin_src bash
-    make truncate-sensitive-files
-    #+end_src
-
-    And then you'll be able to overwrite them with your own files (for example
-    your own =~/.ssh/id_rsa=) and then encrypt them with ~make encrypt~.
+    You have two choices: skip these roles, or write your
+    =group_vars/localhost/vars.yml=.
 
     To skip them, when you reach the [[#provision-machine][provision machine]] step, make Ansible skip
     roles tagged with =uses-secrets=. You don't need to run this now, the
@@ -136,8 +133,6 @@ Install all your applications and configure everything the way you like it with 
     1. Set up passwordless =sudo=
     2. Install a user Python3
     3. Install Ansible
-    4. Set up the Git pre-commit hook that automatically encrypts secrets before
-       Git commits
 
     #+begin_src bash
     make bootstrap
@@ -209,27 +204,21 @@ Install all your applications and configure everything the way you like it with 
 **** PDF Expert
      1. Register license
 
-**** Sound Control
-     1. Check "Check for updates automatically"
-     2. Register license
-     3. Preferences > Priority Devices > Output and Input
-        - Check "Switch to device when" "Device is attached"
-        - Reorder devices in priority list
-
 **** BetterTouchTool
      1. Register license
 
 **** Terminal
 ***** Preferences > Profiles > Pro > Font
-      Set to =Hack Regular 18 pt.=
+      Set to =Hack Regular 18 pt=.
 
 **** System Preferences > Security & Privacy > Privacy > [[https://www.howtogeek.com/297083/why-do-some-mac-apps-need-to-control-this-computer-using-accessibility-features/][Accessibility]]
      - BetterTouchTool.app
-     - Dropbox
-     - Emacs.app
-     - Persephone.app
+     - Emacs-*.app
+     - MacGPT
      - RescueTime
+     - Terminal
      - VLC
+     - WhatsApp
 
 **** System Preferences > Keyboard > Shortcuts > Mission Control
      Uncheck:
@@ -237,6 +226,8 @@ Install all your applications and configure everything the way you like it with 
      - Move left a space
      - Move right a space
      - Switch to desktop 1
+
+     I use these keybindings on Emacs.
 
 ** Roles
 *** Installs
@@ -249,6 +240,7 @@ Install all your applications and configure everything the way you like it with 
      - [[http://mizage.com/divvy/][Divvy]]
      - [[https://www.dropbox.com/install][Dropbox]]
      - [[https://www.elgato.com/en/dock/support][Elgato Dock]]
+     - [[https://www.elgato.com/en/downloads][Elgato Control Center]]
      - [[https://justgetflux.com/][f.lux]]
      - [[https://www.mozilla.org/en-US/firefox/new][Firefox]]
      - [[https://www.google.com/chrome/index.html][Google Chrome]]
@@ -262,7 +254,6 @@ Install all your applications and configure everything the way you like it with 
      - [[https://www.rescuetime.com/][RescueTime]]
      - [[https://www.skype.com/en/download-skype/skype-for-mac/][Skype]]
      - [[https://slack.com/downloads/osx][Slack]]
-     - [[https://staticz.com/soundcontrol/][Sound Control]]
      - [[https://www.spotify.com/br/download/other/][Spotify]]
      - [[http://store.steampowered.com/about/][Steam]]
      - [[https://www.pjrc.com/teensy/loader_mac.html][Teensy Loader]]
@@ -270,15 +261,20 @@ Install all your applications and configure everything the way you like it with 
      - [[https://unity3d.com/get-unity/download][Unity]]
      - [[https://docs.unity3d.com/Manual/GettingStartedInstallingHub.html][Unity Hub]]
      - [[https://www.videolan.org/vlc/download-macosx.html][VLC]]
+     - [[https://www.whatsapp.com/download][WhatsApp]]
+     - [[https://www.wireshark.org/][Wireshark]]
      - [[https://www.xquartz.org/][XQuartz]]
      - [[https://classic.youneedabudget.com/][YNAB]] (disabled by default, I use the online version and the application
        binary isn't available anymore)
+     - [[https://zoom.us/][Zoom]]
+     - [[https://www.zwift.com/][Zwift]]
 
 **** Text Editors
-     - [[https://emacsformacosx.com/][Emacs 27.1]]
-     - [[https://github.com/daviderestivo/homebrew-emacs-head][Emacs 28.0.50]]
+     - [[https://emacsformacosx.com/][Emacs 28.2]]
+     - [[https://github.com/daviderestivo/homebrew-emacs-head][Emacs 29]]
      - [[http://macvim-dev.github.io/macvim/][MacVim]]
      - [[https://github.com/neovim/neovim/wiki/Installing-Neovim][Neovim]]
+     - [[https://www.jetbrains.com/rider/][Rider]]
      - [[http://www.vim.org/][Vim]] (disabled by default until I figure out why it isn't compiling on
        macOS Big Sur with LLVM 12)
      - [[https://code.visualstudio.com/][VSCode]]
@@ -295,6 +291,7 @@ Install all your applications and configure everything the way you like it with 
      - [[https://adoptopenjdk.net/][Java (AdoptOpenJDK)]]
      - [[https://www.lua.org/download.html][Lua]]
      - [[http://luajit.org/download.html][LuaJIT]]
+     - [[https://dotnet.microsoft.com/en-us/download/visual-studio-sdks][.NET]]
      - [[https://nodejs.org/en/download/][Node.js]]
      - [[http://www.purescript.org/][PureScript]] (disabled by default until I figure out why =stack install
        purescript= is currently failing)
@@ -325,6 +322,7 @@ Install all your applications and configure everything the way you like it with 
 
 **** Virtualization, Provisioning, Containers and System Tools
      - [[https://store.docker.com/editions/community/docker-ce-desktop-mac][Docker]]
+     - [[https://cloud.google.com/sdk/docs/install-sdk][gcloud]]
      - [[https://github.com/kubernetes-sigs/krew][krew]]
      - [[https://kubernetes.io/docs/reference/kubectl/kubectl/][kubectl]]
      - [[https://github.com/ahmetb/kubectl-tree][kubectl-tree]]
@@ -400,8 +398,10 @@ Install all your applications and configure everything the way you like it with 
      - [[https://github.com/dandavison/delta][delta]]
      - [[https://github.com/dandavison/delta][delta]]
      - [[https://git-scm.com/download/mac][git]]
+     - [[https://cli.github.com/][gh]]
      - [[https://github.com/sharkdp/fd][fd]]
      - [[https://stedolan.github.io/jq/][jq]]
+     - [[https://www.npmjs.com/package/local-ssl-proxy][local-ssl-proxy]]
      - [[http://www.7-zip.org/][p7zip]]
      - [[https://www.gnu.org/software/parallel/][parallel]]
      - [[https://pypi.python.org/pypi/pgsanity][pgsanity]]
@@ -409,9 +409,11 @@ Install all your applications and configure everything the way you like it with 
      - [[https://github.com/BurntSushi/ripgrep][ripgrep]]
      - [[http://s3tools.org/s3cmd][s3cmd]] (disabled by default, I use the AWS CLI)
      - [[https://github.com/boyter/scc][scc]]
+     - [[https://stripe.com/docs/stripe-cli][stripe-cli]]
      - [[https://tldr.sh/][tealdeer]]
      - [[https://github.com/julienXX/terminal-notifier][terminal-notifier]]
      - [[http://brewformulas.org/Tree][tree]]
+     - [[https://vercel.com/docs/cli][vercel]]
      - [[https://github.com/vi/websocat][websocat]]
      - [[https://github.com/wg/wrk][wrk]]
      - [[https://tukaani.org/xz/][xz]]
@@ -442,6 +444,7 @@ Install all your applications and configure everything the way you like it with 
 
 **** Miscellaneous
      - [[https://mutagen.io/][Mutagen]]
+     - [[https://chromedriver.chromium.org/home][ChromeDriver]]
      - [[http://fontforge.github.io/en-US/downloads/mac-dl/][FontForge]]
      - [[http://download.qt.io/official_releases/qt/5.9/5.9.2/][Qt 5]] (disabled by default)
      - [[https://wordnet.princeton.edu/download][WordNet]]

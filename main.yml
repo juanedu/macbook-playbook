@@ -16,7 +16,6 @@
     # Depends on homebrew.
     - role: gnu-command-line-tools
       tags: [foundational, brew-pkg, gnu-command-line-tools]
-
     # Depends on homebrew.
     - role: make
       tags: [foundational, package-and-build, brew-pkg, make]
@@ -42,7 +41,7 @@
       vars:
         # NOTE: update PYTHON_VERSION in Makefile when changing this.
         # https://www.python.org/ftp/python/
-        python3_version: "3.10.0"
+        python3_version: "3.11.2"
         # 11 is a "Universal 2" binary which works on Apple Silicon.
         # 10.9 does not work on Apple Silicon.
         python3_macos_version: "11" # this is used in the .pkg file name.
@@ -60,7 +59,7 @@
       vars:
         # https://nodejs.org/dist/
         # https://github.com/nodejs/node/releases
-        node_version: "17.1.0"
+        node_version: "21.1.0"
 
     - role: maven
       tags: [foundational, package-and-build, brew-pkg, maven]
@@ -94,6 +93,15 @@
     - role: dotemacs
       tags: [configuration, dotemacs]
 
+    # IMPORTANT #################################################################
+
+    - role: build-emacs
+      tags: [text-editors, brew-pkg, build-emacs]
+
+    # NOTE: trying it out with Monterey (should be at least 2.1.0).
+    - role: openzfs
+      tags: [system-tools, brew-cask-pkg, openzfs]
+
     #############################################################################
     # Programming languages #####################################################
     #############################################################################
@@ -110,7 +118,7 @@
       tags: [programming-languages, bespoke-pkg, go]
       vars:
         # https://go.dev/dl/
-        go_version: "1.17.3"
+        go_version: "1.22.2"
 
     - role: rust
       tags: [programming-languages, rust]
@@ -118,7 +126,7 @@
     - role: ruby
       tags: [programming-languages, ruby]
       vars:
-        ruby_version: 3.0.3
+        ruby_version: 3.2.1
 
     - role: lua
       tags: [programming-languages, brew-pkg, lua]
@@ -135,7 +143,10 @@
         r_version: "4.1.2"
 
     - role: haskell
-      tags: [programming-languages, brew-pkg, haskell]
+      tags: [disabled, programming-languages, brew-pkg, haskell]
+
+    - role: dotnet-sdk
+      tags: [programming-languages, brew-cask-pkg, dotnet-sdk]
 
     # DISABLED: `stack install purescript` is currently failing, disabling until
     # I figure it out.
@@ -147,28 +158,22 @@
     # Text editors ##############################################################
     #############################################################################
 
-    - role: build-emacs
-      tags: [text-editors, brew-pkg, build-emacs]
-
     - role: emacs-pre-built
       tags: [text-editors, bespoke-pkg, emacs-pre-built]
       vars:
-        emacs_pre_built_version: "27.2"
-        emacs_pre_built_patch: "-3"
+        emacs_pre_built_version: "28.2"
+        emacs_pre_built_patch: ""
         # emacs_pre_built_version: "26.1-rc1"
         # emacs_pre_built_pretest: "yes"
 
-    # DISABLED: Vim isn't compiling on macOS Big Sur with LLVM 12, disabling
-    # until I figure it out.
-    # https://stackoverflow.com/questions/65750657/getting-an-error-on-configuring-vim-uint32-t-check-not-defined-correctly
-    # NOTE: testing with Monterey.
+    # DISABLED: Vim isn't compiling with Python 3.10.
     - role: vim
-      tags: [text-editors, bespoke-pkg, vim]
+      tags: [disabled, text-editors, bespoke-pkg, vim]
       vars:
         vim_version: "8.2"
 
     - role: neovim
-      tags: [text-editors, bespoke-pkg, neovim]
+      tags: [disabled, text-editors, bespoke-pkg, neovim]
       vars:
         # https://github.com/neovim/neovim/releases
         neovim_version: "0.5.1"
@@ -176,8 +181,11 @@
     - role: vscode
       tags: [text-editors, brew-pkg, vscode]
 
+    - role: rider
+      tags: [text-editors, brew-cask-pkg, rider]
+
     - role: macvim
-      tags: [text-editors, bespoke-pkg, macvim]
+      tags: [disabled, text-editors, bespoke-pkg, macvim]
       vars:
         # https://github.com/macvim-dev/macvim/releases
         macvim_version: "snapshot-172"
@@ -193,8 +201,9 @@
     # Security ##################################################################
     #############################################################################
 
+    # DISABLED: Apple security stuff is good enough.
     - role: prey
-      tags: [security, bespoke-pkg, prey, uses-secrets]
+      tags: [disabled, security, bespoke-pkg, prey, uses-secrets]
       vars:
         # https://github.com/prey/prey-node-client/releases
         prey_version: "1.9.13"
@@ -228,6 +237,9 @@
 
     - role: vtop
       tags: [observability, npm-pkg, vtop]
+
+    - role: wireshark
+      tags: [observability, brew-cask-pkg, wireshark]
 
     ############################################################################
     # Data Systems #############################################################
@@ -278,6 +290,9 @@
     - role: grammarly
       tags: [desktop-applications, brew-pkg, grammarly]
 
+    - role: zoom
+      tags: [desktop-applications, brew-pkg, zoom]
+
     - role: elgato-dock
       tags: [desktop-applications, bespoke-pkg, elgato-dock]
       vars:
@@ -289,14 +304,14 @@
     - role: daisydisk
       tags: [desktop-applications, brew-cask-pkg, daisydisk, uses-secrets]
 
-    - role: sound-control
-      tags: [desktop-applications, brew-cask-pkg, sound-control]
-
     - role: pdf-expert
       tags: [desktop-applications, brew-cask-pkg, pdf-expert]
 
     - role: flux
       tags: [desktop-applications, brew-cask-pkg, flux]
+
+    - role: whatsapp
+      tags: [desktop-applications, brew-cask-pkg, whatsapp]
 
     - role: toggle-dark-mode
       tags: [desktop-applications, toggle-dark-mode]
@@ -318,7 +333,7 @@
     - role: unity
       tags: [desktop-applications, bespoke-pkg, unity]
       vars:
-        unity_version: "2021.2.4"
+        unity_version: "2022.2.9"
 
     - role: xquartz
       tags: [desktop-applications, bespoke-pkg, xquartz]
@@ -340,27 +355,27 @@
       tags: [desktop-applications, xbar, xbar-plugins]
 
     - role: divvy
-      tags: [desktop-applications, bespoke-pkg, divvy]
+      tags: [disabled, desktop-applications, bespoke-pkg, divvy]
 
     - role: android-file-transfer
-      tags: [desktop-applications, bespoke-pkg, android-file-transfer]
+      tags: [disabled, desktop-applications, bespoke-pkg, android-file-transfer]
 
     - role: dropbox
-      tags: [desktop-applications, bespoke-pkg, dropbox]
+      tags: [disabled, desktop-applications, bespoke-pkg, dropbox]
 
     - role: google-chrome
-      tags: [desktop-applications, bespoke-pkg, google-chrome]
+      tags: [desktop-applications, brew-cask-pkg, google-chrome]
 
     - role: firefox
       tags: [desktop-applications, bespoke-pkg, firefox]
       vars:
         firefox_version: "latest"
 
-    - role: google-chrome-as-default-browser
-      tags: [desktop-applications, google-chrome-as-default-browser]
+    # - role: google-chrome-as-default-browser
+    #   tags: [desktop-applications, google-chrome-as-default-browser]
 
     - role: skype
-      tags: [desktop-applications, bespoke-pkg, skype]
+      tags: [disabled, desktop-applications, bespoke-pkg, skype]
 
     - role: slack
       tags: [desktop-applications, brew-cask-pkg, slack]
@@ -381,7 +396,7 @@
         ynab_version: "4.3.855"
 
     - role: google-photos
-      tags: [desktop-applications, bespoke-pkg, google-photos]
+      tags: [disabled, desktop-applications, bespoke-pkg, google-photos]
 
     - role: dash
       tags: [desktop-applications, bespoke-pkg, dash]
@@ -395,7 +410,13 @@
       tags: [desktop-applications, bespoke-pkg, vlc]
       vars:
         # http://download.videolan.org/pub/videolan/vlc/
-        vlc_version: "3.0.16"
+        vlc_version: "3.0.18"
+
+    - role: elgato-control-center
+      tags: [desktop-applications, brew-pkg, elgato-control-center]
+
+    - role: zwift
+      tags: [desktop-applications, brew-pkg, zwift]
 
     #############################################################################
     # Programming utilities #####################################################
@@ -425,10 +446,13 @@
       tags: [programming-utilities, bespoke-pkg, zprint]
       vars:
         # https://github.com/kkinnear/zprint/releases
-        zprint_version: "1.2.0"
+        zprint_version: "1.2.7"
 
     - role: yapf
       tags: [programming-utilities, pip-pkg, yapf]
+
+    - role: pcsv
+      tags: [programming-utilities, pip-pkg, pcsv]
 
     - role: prettier
       tags: [programming-utilities, npm-pkg, prettier]
@@ -442,8 +466,10 @@
     - role: shfmt
       tags: [programming-utilities, brew-pkg, shfmt]
 
+    # DISABLED: it fails to install on Monterey because a dependency
+    # (pywatchman) isn't building correctly.
     - role: pyre-check
-      tags: [programming-utilities, pip-pkg, pyre-check]
+      tags: [disabled, programming-utilities, pip-pkg, pyre-check]
 
     - role: shellcheck
       tags: [programming-utilities, brew-pkg, shellcheck]
@@ -487,7 +513,7 @@
       tags: [package-and-build, gem-pkg, bundler]
 
     - role: graalvm
-      tags: [package-and-build, bespoke-pkg, graalvm]
+      tags: [disabled, package-and-build, bespoke-pkg, graalvm]
       vars:
         graalvm_version: "21.3.0"
 
@@ -498,10 +524,6 @@
     #############################################################################
     # Virtualization, provisioning, containers and system tools #################
     #############################################################################
-
-    # NOTE: trying it out with Monterey (should be at least 2.1.0).
-    - role: openzfs
-      tags: [system-tools, brew-cask-pkg, openzfs]
 
     # DISABLED: haven't used VirtualBox in a while.
     - role: virtualbox
@@ -533,16 +555,21 @@
       tags: [system-tools, bespoke-pkg, terraform]
       vars:
         # https://releases.hashicorp.com/terraform/
-        terraform_version: "1.0.11"
-        terraform_checksum: "sha256:92f2e7eebb9699e23800f8accd519775a02bd25fe79e1fe4530eca123f178202"
+        terraform_version: "1.4.0"
+        terraform_checksum: "sha256:ec02ccdcc368ce307d03c1e981f3a863d9c07b312635d4aca24159ada7657562"
 
     - role: kubectl
       tags: [system-tools, bespoke-pkg, kubernetes, kubectl]
       vars:
-        kubectl_version: "1.22.4"
+        kubectl_version: "1.26.2"
 
     - role: krew
       tags: [system-tools, bespoke-pkg, kubernetes, krew]
+
+    - role: gcloud
+      tags: [system-tools, bespoke-pkg, gcloud]
+      vars:
+        gcloud_version: "472.0.0"
 
     - role: kubectl-tree
       tags: [system-tools, krew-pkg, kubernetes, kubectl-tree]
@@ -610,6 +637,18 @@
     - role: awscli
       tags: [command-line-tools, pip-pkg, awscli, uses-secrets]
 
+    - role: gh
+      tags: [command-line-tools, brew-pkg, gh, contextualize]
+
+    - role: vercel
+      tags: [command-line-tools, npm-pkg, vercel, contextualize]
+
+    - role: stripe-cli
+      tags: [command-line-tools, npm-pkg, stripe-cli, contextualize]
+
+    - role: local-ssl-proxy
+      tags: [command-line-tools, npm-pkg, local-ssl-proxy, contextualize]
+
     # DISABLED: using awscli instead.
     - role: s3cmd
       tags: [disabled, command-line-tools, s3cmd, uses-secrets]
@@ -655,6 +694,13 @@
     #############################################################################
     # Miscellaneous #############################################################
     #############################################################################
+
+    - role: chromedriver
+      tags: [brew-cask-pkg, brew-cask-pkg-versioned, chromedriver]
+      vars:
+        # Version 116.0.5845.96.
+        # https://github.com/Homebrew/homebrew-cask/blob/master/Casks/c/chromedriver.rb
+        git_commit_ref: "b9ee893f20b4183f9cf7e204ea408c2b11c42ca2"
 
     - role: mutagen
       tags: [brew-pkg, mutagen]
